@@ -886,7 +886,52 @@ footer{
   </ul>
   <div class="footer-copy">© 2026 BathBasRen. All rights reserved.</div>
 </footer>
+<script>
+// 1. Анімація появи елементів (твій старий скрипт)
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) { e.target.classList.add('visible') }
+  })
+}, { threshold: .12 })
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
 
+// 2. Скрипт для відправки форми без перезавантаження та її очищення
+const form = document.querySelector('.form-card form');
+const submitBtn = form.querySelector('.submit-btn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault(); // Зупиняємо стандартний редірект браузера
+  
+  submitBtn.disabled = true;
+  submitBtn.innerText = 'Sending...';
+
+  const data = new FormData(form);
+
+  try {
+    const response = await fetch(form.action, {
+      method: form.method,
+      body: data,
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      // Тут можна замість alert вивести якийсь свій текст на екрані
+      alert('Thank you! Your request has been sent.'); 
+      
+      form.reset(); // ОСЬ ЦЕЙ РЯДОК ПОВНІСТЮ ОЧИЩАЄ ВСІ ПОЛЯ
+    } else {
+      alert('Oops! There was a problem submitting your form.');
+    }
+  } catch (error) {
+    alert('Network error. Please try again later.');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerText = 'Request Free Quote →';
+  }
+});
+</script>
 <script>
 // Scroll reveal
 const observer = new IntersectionObserver(entries=>{
